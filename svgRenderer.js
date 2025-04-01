@@ -347,8 +347,8 @@ const SvgRenderer = (function() {
             if (chip.number !== null) {
                 const fontSize = Math.min(chip.width, chip.height) * 0.2; // Scale font with chip size
                 const numberText = createSvgElement('text', {
-                    x: chip.x + chip.width - 4, // Moved further to the left
-                    y: chip.y + fontSize + 3,  // Moved further up
+                    x: chip.x + chip.width - 1, // Moved further to the left
+                    y: chip.y + fontSize + 1,  // Moved further up
                     'text-anchor': 'end',
                     'font-size': fontSize,
                     fill: '#555555', // Darker color
