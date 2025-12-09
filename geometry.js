@@ -22,38 +22,40 @@ function generateChipGrid(waferParams, chipWidth, chipHeight) {
     const waferRadius = waferParams.diameter / 2;
     const usableRadius = waferRadius - waferParams.excludedRadius;
     
+    // Calculate how many chips we need in each dimension to cover the wafer
+    // Add a margin of 1 to ensure we cover the entire wafer
     const numCols = Math.ceil(waferParams.diameter / chipWidth) + 2;
     const numRows = Math.ceil(waferParams.diameter / chipHeight) + 2;
     
+    // Calculate grid dimensions
     const gridWidth = numCols * chipWidth;
     const gridHeight = numRows * chipHeight;
     
+    // Calculate starting position (top-left of grid)
+    // Since (0,0) is at the center of the wafer, we start at (-gridWidth/2, -gridHeight/2)
     const xStart = -gridWidth / 2;
     const yStart = -gridHeight / 2;
     
+    // Get flat edge parameters
     const flatParams = getFlatCutoff(waferRadius, waferParams.flatAngle);
     
+    // Generate chip array
     const chips = [];
     let chipId = 0;
-    let chipNumber = 1;
-
+    let chipNumber = 1; // For sequential numbering, starting at 1
+    
+    // First pass - create all chips and mark which ones are inside
     const tempChips = [];
     for (let row = 0; row < numRows; row++) {
         for (let col = 0; col < numCols; col++) {
-
+            // Calculate chip position (bottom-left corner)
             const x = xStart + col * chipWidth;
             const y = yStart + row * chipHeight;
             
-            const inside = isChipInsideWafer(
-                x, 
-                y, 
-                chipWidth, 
-                chipHeight, 
-                usableRadius, 
-                flatParams
-            );
-
-            // UPDATED: chip now includes fileName
+            // Check if chip is inside wafer boundary
+            const inside = isChipInsideWafer(x, y, chipWidth, chipHeight, usableRadius, flatParams);
+            
+            // Create chip object
             tempChips.push({
                 id: chipId++,
                 x: x,
@@ -62,23 +64,25 @@ function generateChipGrid(waferParams, chipWidth, chipHeight) {
                 height: chipHeight,
                 inside: inside,
                 color: '#ffffff',
-                label: '',
-                number: inside ? chipNumber++ : null,
-                fileName: ""      // <---- NEW default field
+                label: '', // User-assigned label starts empty
+                number: inside ? chipNumber++ : null // Sequential number for inside chips only
             });
         }
     }
-
-    const insideChips = tempChips
-        .filter(chip => chip.inside)
+    
+    // Second pass - sort chips by Y (top to bottom) and then X (left to right)
+    // and reassign numbers to ensure top-left to bottom-right ordering
+    const insideChips = tempChips.filter(chip => chip.inside)
         .sort((a, b) => a.y - b.y || a.x - b.x);
-
+    
+    // Reassign numbers
     insideChips.forEach((chip, index) => {
-        chip.number = index + 1;
+        chip.number = index + 1; // Start from 1
     });
-
+    
+    // Add all chips to final array (both inside and outside)
     chips.push(...tempChips);
-
+    
     return chips;
 }
 
@@ -89,8 +93,13 @@ function generateChipGrid(waferParams, chipWidth, chipHeight) {
  * @returns {Object} Parameters defining the flat edge
  */
 function getFlatCutoff(waferRadius, flatAngleDeg) {
+    // Convert angle to radians
     const flatAngleRad = flatAngleDeg * Math.PI / 180;
+    
+    // Calculate the x-coordinate of the flat edge (left side of wafer)
     const flatXCutoff = -waferRadius * Math.cos(flatAngleRad / 2);
+    
+    // Calculate the maximum y extent of the flat edge
     const flatYMax = waferRadius * Math.sin(flatAngleRad / 2);
     
     return {
@@ -110,19 +119,22 @@ function getFlatCutoff(waferRadius, flatAngleDeg) {
  * @returns {boolean} True if chip is inside usable wafer area
  */
 function isChipInsideWafer(x, y, chipWidth, chipHeight, usableRadius, flatParams) {
+    // Calculate the four corners of the chip
     const corners = [
-        { x: x, y: y },
-        { x: x + chipWidth, y: y },
-        { x: x, y: y + chipHeight },
-        { x: x + chipWidth, y: y + chipHeight }
+        { x: x, y: y },                           // Bottom-left
+        { x: x + chipWidth, y: y },               // Bottom-right
+        { x: x, y: y + chipHeight },              // Top-left
+        { x: x + chipWidth, y: y + chipHeight }   // Top-right
     ];
     
+    // Check if any corner is outside the usable circle
     for (const corner of corners) {
         const distanceFromCenter = Math.sqrt(corner.x * corner.x + corner.y * corner.y);
         if (distanceFromCenter > usableRadius) {
             return false;
         }
         
+        // Check if corner is in the flat edge cutoff area
         if (corner.x < flatParams.xCutoff && Math.abs(corner.y) < flatParams.yMax) {
             return false;
         }
