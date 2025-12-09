@@ -58,26 +58,6 @@ const Controls = (function() {
         // Regenerate wafer map
         WaferMapping.generateMap();
     }
-
-    /**
-     * NEW: Handle file selection for chip
-     */
-    function handleChipFileChange(event) {
-        const file = event.target.files[0];
-        if (!file) return;
-
-        const filename = file.name;
-
-        // Save filename into chip params
-        WaferState.updateChipParams({
-            fileName: filename
-        });
-
-        console.log("Chip file selected:", filename);
-
-        // Reset file input so same file can be selected again
-        event.target.value = '';
-    }
     
     /**
      * Handle changes to chip parameters
@@ -263,5 +243,4 @@ const Controls = (function() {
             return this;
         }
     };
-
 })();
