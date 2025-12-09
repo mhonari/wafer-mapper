@@ -13,111 +13,77 @@
 <body>
     <div class="app-container">
         <div class="sidebar">
+            <!--<h1>Wafer Settings</h1>-->
             <div class="logo-container">
                 <img src="logo.png" alt="Logo" id="logo">
             </div>
-
-            <!-- ----------------------------- -->
-            <!-- Wafer Parameters Section -->
-            <!-- ----------------------------- -->
             <div class="control-section">
                 <h2>Wafer Parameters</h2>
-
                 <div class="input-group">
                     <label for="wafer-name">Wafer Name:</label>
                     <input type="text" id="wafer-name" placeholder="Enter wafer name">
                 </div>
-
                 <div class="input-group">
                     <label for="wafer-diameter">Wafer Diameter (mm):</label>
                     <input type="number" id="wafer-diameter" value="100" min="1">
                 </div>
-
                 <div class="input-group">
                     <label for="flat-angle">Flat Angle (deg):</label>
                     <input type="number" id="flat-angle" value="15" min="0" max="180">
                 </div>
-
                 <div class="input-group">
                     <label for="excluded-radius">Excluded Radius (mm):</label>
                     <input type="number" id="excluded-radius" value="0" min="0">
                 </div>
             </div>
-
-            <!-- ----------------------------- -->
-            <!-- Chip Parameters Section -->
-            <!-- ----------------------------- -->
+            
             <div class="control-section">
                 <h2>Chip Parameters</h2>
-
                 <div class="input-group">
                     <label for="chip-width">Chip Width (mm):</label>
                     <input type="number" id="chip-width" value="10" min="0.1">
                 </div>
-
                 <div class="input-group">
                     <label for="chip-height">Chip Height (mm):</label>
                     <input type="number" id="chip-height" value="12" min="0.1">
                 </div>
-
-                <!-- NEW: Chip File Input -->
-                <div class="input-group">
-                    <label for="chip-file">Chip File:</label>
-                    <input type="file" id="chip-file">
-                </div>
-
-                <!-- Optional: Display selected file name -->
-                <div id="chip-file-display" style="font-size: 12px; color: #666; margin-left: 4px;">
-                    No file selected
-                </div>
             </div>
-
-            <!-- ----------------------------- -->
-            <!-- Chip Labeling Section -->
-            <!-- ----------------------------- -->
+            
             <div class="control-section">
                 <h2>Chip Labeling</h2>
-
                 <div class="input-group">
                     <label for="chip-color">Color:</label>
                     <input type="color" id="chip-color" value="#ffffff">
                 </div>
-
                 <div class="input-group">
                     <label for="chip-label">Label:</label>
                     <input type="text" id="chip-label" placeholder="Enter label">
                 </div>
-
                 <div class="input-group">
                     <label for="label-font-size">Label Font Size:</label>
                     <input type="range" id="label-font-size" min="0.1" max="0.3" step="0.01" value="0.18">
                     <output for="label-font-size" id="font-size-value">18%</output>
                 </div>
             </div>
-
-            <!-- ----------------------------- -->
-            <!-- Export Section -->
-            <!-- ----------------------------- -->
+            
             <div class="control-section">
                 <h2>Export</h2>
-
                 <button id="export-png">Export as PNG</button>
                 <button id="export-svg">Export as SVG</button>
                 <button id="export-json">Export as JSON</button>
-
-                <div class="input-group">
+                    <div class="input-group">
                     <label for="import-json">Import JSON:</label>
                     <input type="file" id="import-json" accept=".json">
                 </div>
             </div>
+            
         </div>
-
-        <!-- Canvas Container -->
+        
         <div class="canvas-container">
             <svg id="wafer-canvas"></svg>
         </div>
     </div>
-
+    
     <!-- Scripts -->
     <script src="geometry.js"></script>
     <script src="state.js"></script>
